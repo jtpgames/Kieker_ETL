@@ -55,9 +55,9 @@ fun main(args: Array<String>)
         )
         val teaStoreLogFileReader = TeaStoreLogFileReader(readerConfig, analysisController)
 
-        // filter operations so that only "big" operations are included not every small getter and setter
+        // filter operations of the servlets because they handle HTTP Requests from users
         val opFilterConfig = Configuration()
-        opFilterConfig.setProperty(OperationSignatureFilter.CONFIG_PROPERTY_NAME_OPERATION, "Repository")
+        opFilterConfig.setProperty(OperationSignatureFilter.CONFIG_PROPERTY_NAME_OPERATION, "servlet")
         val operationSignatureFilter = OperationSignatureFilter(opFilterConfig, analysisController)
         analysisController.connect(
             teaStoreLogFileReader,
