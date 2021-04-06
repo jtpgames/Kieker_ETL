@@ -8,7 +8,9 @@ import java.io.FileOutputStream
 import java.text.DateFormat
 import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.system.exitProcess
 
@@ -84,19 +86,18 @@ fun main(args: Array<String>)
             CollectToListFilter.INPUT_PORT_NAME_EVENTS
         )
 
-        // TODO Remove the TeeFilter
-        val teeFilterConfig = Configuration()
-        teeFilterConfig.setProperty(
-            TeeFilter.CONFIG_PROPERTY_NAME_STREAM,
-            TeeFilter.CONFIG_PROPERTY_VALUE_STREAM_STDOUT
-        )
-        val teeFilter = TeeFilter(teeFilterConfig, analysisController)
-        analysisController.connect(
-            collectToListFilter,
-            CollectToListFilter.OUTPUT_PORT_NAME_RELAYED_EVENTS,
-            teeFilter,
-            TeeFilter.INPUT_PORT_NAME_EVENTS
-        )
+//        val teeFilterConfig = Configuration()
+//        teeFilterConfig.setProperty(
+//            TeeFilter.CONFIG_PROPERTY_NAME_STREAM,
+//            TeeFilter.CONFIG_PROPERTY_VALUE_STREAM_STDOUT
+//        )
+//        val teeFilter = TeeFilter(teeFilterConfig, analysisController)
+//        analysisController.connect(
+//            collectToListFilter,
+//            CollectToListFilter.OUTPUT_PORT_NAME_RELAYED_EVENTS,
+//            teeFilter,
+//            TeeFilter.INPUT_PORT_NAME_EVENTS
+//        )
 
         // execute the pipeline
         analysisController.run()
@@ -107,14 +108,28 @@ fun main(args: Array<String>)
             .map { any -> any as GSCommandLogEntry }
             .sortedBy { entry -> entry.timestamp }
 
-        // write the events in GS command log format to a new file
-        FileOutputStream("${logDirectory}${File.separatorChar}teastore-cmd_$dateFromFileName.log")
-            .bufferedWriter()
-            .use { out ->
-                sortedList.forEach { entry ->
-                    out.write(entry.toString())
-                    out.newLine()
+        val entriesGroupedByDate = sortedList.groupBy { LocalDate.ofInstant(it.timestamp, ZoneOffset.systemDefault()) }
+
+        entriesGroupedByDate.forEach { (date, entries) ->
+            // write the events in GS command log format to a new file
+            FileOutputStream("${logDirectory}${File.separatorChar}teastore-cmd_$date.log")
+                .bufferedWriter()
+                .use { out ->
+                    entries.forEach { entry ->
+                        out.write(entry.toString())
+                        out.newLine()
+                    }
                 }
-            }
+        }
+
+//        // write the events in GS command log format to a new file
+//        FileOutputStream("${logDirectory}${File.separatorChar}teastore-cmd_$dateFromFileName.log")
+//            .bufferedWriter()
+//            .use { out ->
+//                sortedList.forEach { entry ->
+//                    out.write(entry.toString())
+//                    out.newLine()
+//                }
+//            }
     }
 }
