@@ -5,6 +5,8 @@ import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.controlflow.OperationExecutionRecord;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
         })
 public class GSCommandLogConverterFilter extends AbstractFilterPlugin
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GSCommandLogConverterFilter.class);
     public static final String INPUT_PORT_NAME_RECORDS = "newRecord";
     public static final String OUTPUT_PORT_NAME_GS_CMD_LOG_ENTRIES = "entries";
 
@@ -70,7 +73,7 @@ public class GSCommandLogConverterFilter extends AbstractFilterPlugin
                 .skip(splittedOperation.length - 2)
                 .collect(Collectors.joining("_"));
 
-        var uniqueCommandId = Objects.hash(record.getTraceId(), classAndMethodName);
+        var uniqueCommandId = record.hashCode();
 
         var startCommandLogEntry = new GSCommandLogEntry(
                 uniqueCommandId,

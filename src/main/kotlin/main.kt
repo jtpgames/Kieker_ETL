@@ -59,8 +59,9 @@ fun main(args: Array<String>)
 
         // filter operations of the servlets because they handle HTTP Requests from users
         val opFilterConfig = Configuration()
-        opFilterConfig.setProperty(OperationSignatureFilter.CONFIG_PROPERTY_NAME_OPERATION, "servlet")
+        opFilterConfig.setProperty(OperationSignatureFilter.CONFIG_PROPERTY_NAME_OPERATION, "teastore")
         val operationSignatureFilter = OperationSignatureFilter(opFilterConfig, analysisController)
+        // sets the execution order of the different pipeline parts. connect first.output with second.input
         analysisController.connect(
             teaStoreLogFileReader,
             TeaStoreLogFileReader.OUTPUT_PORT_NAME_RECORDS,

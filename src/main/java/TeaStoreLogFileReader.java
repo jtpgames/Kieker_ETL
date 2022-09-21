@@ -83,6 +83,7 @@ public class TeaStoreLogFileReader extends AbstractReaderPlugin implements IMoni
     @Override
     public boolean newMonitoringRecord(IMonitoringRecord record)
     {
+        // why not return super.deliver?
         super.deliver(OUTPUT_PORT_NAME_RECORDS, record);
 
         return true;
