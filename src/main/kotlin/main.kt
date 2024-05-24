@@ -20,7 +20,7 @@ fun main(args: Array<String>)
     {
         println(
             "Invalid number of Arguments.\n" +
-                    "Usage: Kiefer_ETL <path_to_kiefer_log_directory>"
+                    "Usage: Kiefer_ETL <path_to_kieker_log_directory>"
         )
         exitProcess(1)
     }
